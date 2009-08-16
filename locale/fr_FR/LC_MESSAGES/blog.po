@@ -1,0 +1,62 @@
+# pycoblog.
+# Copyright (C) 2009
+# This file is distributed under the same license as the pycoblog package.
+# jeanbon, 2009.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-06 12:12+0200\n"
+"PO-Revision-Date: 2009-08-06 21:29+0200\n"
+"Last-Translator: Jeanbon\n"
+"Language-Team: Français\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: blog.py:534
+msgid "Search : "
+msgstr "Rechercher : "
+
+#: blog.py:559
+msgid "No comments"
+msgstr "Aucun commentaire."
+
+#: blog.py:560
+msgid "Only one comment"
+msgstr "Un seul commentaire."
+
+#: blog.py:561
+#, python-format
+msgid "%d comments"
+msgstr "%d commentaires"
+
+#: blog.py:568
+msgid "Read more..."
+msgstr "Lire la suite..."
+
+#: blog.py:719
+msgid "Leave a comment : "
+msgstr "Laisser un commentaire : "
+
+#: blog.py:720
+msgid "Author : "
+msgstr "Auteur : "
+
+#: blog.py:722
+msgid "Title : "
+msgstr "Titre : "
+
+#: blog.py:724
+msgid "Content : "
+msgstr "Contenu : "
+
+#: blog.py:726
+msgid "Please copy this captcha : "
+msgstr "Merci de copier le contenu du captcha : "
+
+#: blog.py:729
+msgid "Send"
+msgstr "Envoyer."

@@ -1,0 +1,49 @@
+[blog]
+name = [pycoblog]
+author = anon
+email = anon@b.org
+home = http://foo.bar/blog/
+directory = blog
+posts_directory = %(directory)s/articles
+comments_directory = %(directory)s/comments
+captchas_directory = %(directory)s/captchas
+posts_per_page = 10
+pages_counter_start = 0
+posts_counter_start = 0
+comments_counter_start = 0
+
+[header]
+format = {l:<a href="[home]">Pycoblog</a>} {c:Pages : [numbers]} {r:[search]}
+
+[footer]
+format = {l:Flux : [feed]}{c:Pages : [numbers]}{r:Tags : [tags]}
+
+[post]
+format = [infos] [content]
+infos_format = [id] · [date] · [title] par [author] · Tags : [tags] · [comments]
+
+[comment]
+format = [author] [content]
+infos_format = [id] [title] par [author], [date]
+auto_moderated = off
+
+[url_rewriting]
+enabled = on
+post = [num]
+page = pages/[num]
+tag = tags/[tag]
+author = authors/[author]
+
+[feed]
+# If you want to add a subtitle to the feed
+subtitle = 
+feed_number = 10
+atom = on
+atom_path = atom.xml
+rss = on
+rss_path = rss.xml
+
+[filters]
+# You can use %(directory)s defined in [blog]
+path = modules
+modules = mdown hilight 
