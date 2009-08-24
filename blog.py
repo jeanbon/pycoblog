@@ -20,7 +20,7 @@ from ConfigParser import SafeConfigParser, NoOptionError
 from types import ModuleType
 
 from utils.html.structure import XHTMLStructure
-import utils.html.xhtmltags as tags
+import utils.html.xhtmltags as t
 from utils.rfc3339 import rfc3339
 from utils.captcha import generate_captcha
 
@@ -524,18 +524,18 @@ class Blog(object):
         """
         comm_id = str(comment["id"])
         comm_infos = expand(self.config.get("comment", "infos_format"),
-                ((r"\[id\]", A(self.rewrite(post=str(comment["post"]),
+                ((r"\[id\]", t.A(self.rewrite(post=str(comment["post"]),
                     comment=comm_id), comm_id, name="comment_%s" %
                     comm_id)),
                  (r"\[title\]", comment["title"]),
                  (r"\[author\]", comment["author"]),
                  (r"\[date\]", frogify(float(comment["date"]), True))
                  ))
-        infos = Div(**{"id":"", "class": "comment_infos",
+        infos = t.Div(**{"id":"", "class": "comment_infos",
             "content": comm_infos})
-        content = Div(**{"id":"", "class": "comment_content",
+        content = t.Div(**{"id":"", "class": "comment_content",
             "content": comment["content"]})
-        return unicode(Div(**{"id":"", "class": "comment", "content": infos +
+        return unicode(t.Div(**{"id":"", "class": "comment", "content": infos +
             content}))
 
     def format_div(self, option, div_id, page=None, tags=None):
@@ -543,26 +543,26 @@ class Blog(object):
         Returns a div with expanded options.
         """
         
-        numbers = "".join(unicode(A(self.rewrite(page=n), str(n),
+        numbers = "".join(unicode(t.A(self.rewrite(page=n), str(n),
             **{"class": "link_page" if n != page else "link_page_selected"}))
             for n in range(self._total_pages()))
-        tags = ", ".join(unicode(A(self.rewrite(tag=t), t)) for t in
+        tags = ", ".join(unicode(t.A(self.rewrite(tag=t), t)) for t in
                 self._total_tags())
         home = self.config.get_blog("home", "")
         name = self.config.get_blog("name", "")
         feeds = self.get_all_feeds()
         content = expand(option,
-           ((r"\[title\]", H(1, unicode(A(home, name)))),
+           ((r"\[title\]", t.H(1, unicode(t.A(home, name)))),
             (r"\[home\]", home),
             (r"\[numbers\]", numbers),
             (r"\[tags\]", tags),
-            (r"\[search\]", unicode(Form(self.config.get_blog(
-                "home", "")+argv[0], Label("search", _("Search : ")) +
-                                     Input("text", name="search")))),
-            (r"\[feed\]", " ".join(unicode(A(l, v)) for v,
+            (r"\[search\]", unicode(t.Form(self.config.get_blog(
+                "home", "")+argv[0], t.Label("search", _("Search : ")) +
+                                     t.Input("text", name="search")))),
+            (r"\[feed\]", " ".join(unicode(t.A(l, v)) for v,
                 l in feeds))
            ))
-        return unicode(Div(div_id, content))
+        return unicode(t.Div(div_id, content))
 
     def format_post(self, post, short=True):
         """
@@ -576,29 +576,31 @@ class Blog(object):
         self_link = self.rewrite(post=str(post["id"]))
         # Replace the elements in the configurationn with expand
         post_infos = expand(self.config.get("post", "infos_format"),
-            ((r"\[id\]", unicode(A(self_link, str(post["id"])))),
-             (r"\[title\]", unicode(A(self_link, post["title"]))),
-             (r"\[author\]", unicode(A(self.rewrite(author=post["author"]),
+            ((r"\[id\]", unicode(t.A(self_link, str(post["id"])))),
+             (r"\[title\]", unicode(t.A(self_link, post["title"]))),
+             (r"\[author\]", unicode(t.A(self.rewrite(author=post["author"]),
                  post["author"]))),
+             # TODO A filter for the date
              (r"\[date\]", frogify(float(post["date"]), True)),
              (r"\[comments\]",  _("No comments") if not n_comments else
-                 unicode(A(first_comment, _("Only one comment") if
+                 unicode(t.A(first_comment, _("Only one comment") if
                  n_comments == 1 else _("%d comments") % n_comments))),
-             (r"\[tags\]", ", ".join(unicode(A(self.rewrite(tag=t), t)) for t
-                 in post["tags"])),
+             (r"\[tags\]", ", ".join(unicode(t.A(self.rewrite(tag=t), t))
+                 for t in post["tags"])),
              ))
         post_content = post["content"]
         self._filter("print_post", post_content)
         short, post_content = (shortify(post_content) if short else (False,
                 post_content))
         if short:
-            post_content = post_content + A(self_link, _("Read more..."))
-        infos = Div(**{"id": "", "class": "post_infos", "content": post_infos})
-        content = unicode(Div(**{"id": "", "class": "post_content", "content":
-                post_content}))
+            post_content = post_content + t.A(self_link, _("Read more..."))
+        infos = t.Div(**{"id": "", "class": "post_infos",
+            "content": post_infos})
+        content = unicode(t.Div(**{"id": "", "class": "post_content",
+            "content": post_content}))
         fpost = expand(self.config.get("post", "format"), ((r"\[infos\]",
             unicode(infos)), (r"\[content\]", content)))
-        return unicode(Div(**{"id":"", "class":"post", "content": fpost}))
+        return unicode(t.Div(**{"id":"", "class":"post", "content": fpost}))
 
     def get_all_feeds(self):
         """
@@ -672,22 +674,24 @@ class Blog(object):
         """
         Internal, make the dirs and touch the files
         """
-        if not os.path.exists(".htaccess"):
-            with copen(".htaccess") as f:
-                f.write("DirectoryIndex %s" % argv[0])
+        pexists = os.path.exists
+        pjoin = os.path.join
+        #if not pexists(".htaccess"):
+        #    with copen(".htaccess", "w") as f:
+        #        f.write("DirectoryIndex %s" % argv[0])
         for dir in [d for o, d in self.config.items("blog") if
-                o.endswith("_directory")]:
-            if not os.path.exists(dir):
+                o.endswith("directory")]:
+            if not pexists(dir):
                 os.makedirs(dir, mode=(0770 if not "captcha" in dir else 0771))
-                with copen(".htaccess") as f:
+                with copen(pjoin(dir, ".htaccess"), "w") as f:
                     f.write("Order Deny, Allow\nDeny from All")
 
         for index in [getattr(self, a) for a in self.__dict__ if
                 a.endswith("_index")]:
-            if not os.path.exists(index):
+            if not pexists(index):
                 with copen(index, "w"): pass
                 os.chmod(index, 0640)
-        if os.path.exists(self.init_file):
+        if pexists(self.init_file):
             with copen(self.init_file) as f:
                 lines = f.readlines()
             try:
@@ -730,54 +734,56 @@ class Blog(object):
             end = start + ppp if start < -ppp else None
             # posts[-20:-10] for instance, or posts[-10:]
             posts = self.get_posts(prange=(start, end))
-            append(unicode(BR()).join(self.format_post(post) for post in posts))
+            append(unicode(t.BR()).join(self.format_post(post) for post
+                in posts))
         elif post is not None:
             p = self.get_posts(post_id=post)
             append(self.format_post(p, False))
-            append(Div("comments", unicode(BR()).join(self.format_comment(c)
+            append(t.Div("comments",
+                unicode(t.BR()).join(self.format_comment(c)
                 for c in self.get_comments_by_post_id(post))))
             path, code = self.create_captcha()
             form_content = (
-                    _("Leave a comment : ") + BR(),
-                    Label("author", _("Author : ")),
-                    Input("text", name="author") + BR(),
-                    Label("title", _("Title : ")),
-                    Input("text", name="title") + BR(),
-                    Label("content", _("Content : ")) + BR(),
-                    Textarea(5, 80, content="", name="content") + BR(),
-                    Label("captcha_content", _("Please copy this captcha : ")),
-                    BR() + Img(path, "It's a captcha") + BR(), 
-                    Input("text", name="captcha_content") + BR(),
-                    Input("submit", value=_("Send")),
-                    Input("hidden", name="post", value=str(post)),
-                    Input("hidden", name="mode", value="add"),
-                    Input("hidden", name="captcha_path", value=path)
+                    _("Leave a comment : ") + t.BR(),
+                    t.Label("author", _("Author : ")),
+                    t.Input("text", name="author") + t.BR(),
+                    t.Label("title", _("Title : ")),
+                    t.Input("text", name="title") + t.BR(),
+                    t.Label("content", _("Content : ")) + t.BR(),
+                    t.Textarea(5, 80, content="", name="content") + t.BR(),
+                    t.Label("captcha_content", _("Please copy this captcha : ")),
+                    t.BR() + t.Img(path, "It's a captcha") + t.BR(), 
+                    t.Input("text", name="captcha_content") + t.BR(),
+                    t.Input("submit", value=_("Send")),
+                    t.Input("hidden", name="post", value=str(post)),
+                    t.Input("hidden", name="mode", value="add"),
+                    t.Input("hidden", name="captcha_path", value=path)
             )
-            append(Form(self.config.get_blog("home", "") +
+            append(t.Form(self.config.get_blog("home", "") +
                 "comments.py", u"\n".join(unicode(l) for l in form_content),
                 method="POST", id="leave_message"))
 
         elif author is not None:
-            append(unicode(BR()).join(self.format_post(post) for post in
+            append(unicode(t.BR()).join(self.format_post(post) for post in
                     self.get_posts(author=author)[::-1]))
 
         elif search is not None:
             results = self.search(search)
             if results:
-                append(unicode(BR()).join(self.format_post(post) for post in
+                append(unicode(t.BR()).join(self.format_post(post) for post in
                         results[::-1]))
             else:
-                append(P("Nothing found."))
+                append(t.P("Nothing found."))
         elif tag is not None:
-            append(unicode(BR()).join(self.format_post(post) for post in
+            append(unicode(t.BR()).join(self.format_post(post) for post in
                     self.get_posts(tag=tag)[::-1]))
         else:
-            append(H(2, "ERROR, FAIL, PWND."))
+            append(t.H(2, "ERROR, FAIL, PWND."))
 
         footer = self.format_div(self.config.get("footer", "format"), "footer",
                 page=page)
         
-        return unicode(Div("container", header + Div("content",
+        return unicode(t.Div("container", header + t.Div("content",
             "\n".join(unicode(l) for l in content) + footer)))
 
     def print_feed(self, format="atom"):
@@ -1043,7 +1049,7 @@ def main():
     else:
         args["page"] = blog.config.get_blog("pages_counter_start", 0, "int")
     if POST["mode"] == "edit":
-        struct.content = Form(home + "/" + argv[0])
+        struct.content = t.Form(home + "/" + argv[0])
     elif POST["mode"] == "test_atom":
         struct = blog.print_feed("atom")
     else:
