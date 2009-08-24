@@ -1032,7 +1032,6 @@ def main():
     struct.head.add_style(link=home+"/hilight.css")
 
     print "\n".join(headers) + "\n"
-    #print field_storage, post
     args = {}
     if POST["page"] and POST["page"].isdigit():
         args["page"] = int(POST["page"])

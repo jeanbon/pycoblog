@@ -17,10 +17,6 @@ a:hover {
     background-color:#C7D087;
 }
 
-/*#container {
-    position: relative;
-}*/
-
 #header,#footer{
     display: table;
     width: 100%;
@@ -30,10 +26,6 @@ a:hover {
 
 #header h1 { font-size: 1.5em;  }
 #header a {  padding: 2px 10px; }
-/*#footer{
-    position: absolute;
-    bottom: 0;
-}*/
 
 .item{
     display: table-cell;
@@ -73,7 +65,6 @@ a:hover {
     text-align: right;
     padding-right: 10px;
     padding-top: 10px;
-/*    float: right;*/
 }
 
 div#content{
@@ -85,17 +76,14 @@ div#content{
     border-color: #B6C560;
     border-style: solid;
     border-width: 3px 1px 1px 3px;
-    /*background-color: #CED6CD;*/
 }
 .post_infos{
     padding: 2px;
-    /*float: left;*/
-    /*background-color: #AAA;*/
 }
+
 .post_content{
     text-align: justify;
     border-top: 1px solid #B6C560;
-    /*border-top: none;*/
     padding: 0.5em 10px;
 }
 
