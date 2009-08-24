@@ -1011,6 +1011,9 @@ def main():
     elif "update" in argv:
         blog.update_feed()
         return
+    elif "gen_lighttpd":
+        # generate a lighttpd configuration file
+        pass
     home = blog.config.get("blog", "home")
     field_storage = FieldStorage()
     POST = {
